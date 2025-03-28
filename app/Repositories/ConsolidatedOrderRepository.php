@@ -10,7 +10,7 @@ class ConsolidatedOrderRepository
 {
     public function getAll()
     {
-        return ConsolidatedOrder::latest()->paginate(20);
+        return ConsolidatedOrder::latest()->paginate(15);
     }
 
     public function findById(int $id)
