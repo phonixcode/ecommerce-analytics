@@ -76,7 +76,7 @@ Before you begin, ensure you have met the following requirements:
     ```
     **View:** Open `http://localhost:8000`
 
-    **DEMO:** Open [Demo]()
+    **DEMO:** Open [Demo](https://ecommerce-analytice.laravel.cloud/)
 
 ### API Endpoints
 - **GET /api/consolidated-orders**: Retrieve all consolidated-orders.
