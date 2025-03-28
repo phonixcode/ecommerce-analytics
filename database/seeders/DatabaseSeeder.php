@@ -25,36 +25,28 @@ class DatabaseSeeder extends Seeder
         //     'email' => 'test@example.com',
         // ]);
 
-        // Customer::factory(200)->create()->each(function ($customer) {
-        //     $orders = Order::factory(10)->create(['customer_id' => $customer->id]);
-
-        //     $orders->each(function ($order) {
-        //         $products = Product::factory(5)->create();
-        //         foreach ($products as $product) {
-        //             OrderItem::factory()->create([
-        //                 'order_id' => $order->id,
-        //                 'product_id' => $product->id,
-        //                 'price' => $product->price,
-        //             ]);
-        //         }
-        //     });
-        // });
-
         Customer::factory(200)->create()->each(function ($customer) {
             $orders = Order::factory(10)->create(['customer_id' => $customer->id]);
 
             $orders->each(function ($order) use ($customer) {
+                $totalAmount = 0;
+
                 $products = Product::factory(5)->create();
 
                 foreach ($products as $product) {
+                    $quantity = rand(1, 5);
+                    $price = $product->price;
+                    $lineTotal = $quantity * $price;
+
+                    $totalAmount += $lineTotal;
+
                     $orderItem = OrderItem::factory()->create([
-                        'order_id' => $order->id,
+                        'order_id'   => $order->id,
                         'product_id' => $product->id,
-                        'quantity' => rand(1, 5),
-                        'price' => $product->price,
+                        'quantity'   => $quantity,
+                        'price'      => $price,
                     ]);
 
-                    // Insert into consolidated_orders table
                     ConsolidatedOrder::create([
                         'order_id'      => $order->id,
                         'customer_id'   => $customer->id,
@@ -65,12 +57,14 @@ class DatabaseSeeder extends Seeder
                         'sku'           => $product->sku,
                         'quantity'      => $orderItem->quantity,
                         'item_price'    => $orderItem->price,
-                        'line_total'    => $orderItem->quantity * $orderItem->price,
+                        'line_total'    => $lineTotal,
                         'order_date'    => $order->order_date,
                         'order_status'  => $order->status,
-                        'order_total'   => $order->total_amount,
+                        'order_total'   => $totalAmount,
                     ]);
                 }
+
+                $order->update(['total_amount' => $totalAmount]);
             });
         });
     }
